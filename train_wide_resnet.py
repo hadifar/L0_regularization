@@ -210,7 +210,7 @@ def train(train_loader, model, criterion, optimizer, lr_schedule, epoch):
         data_time.update(time.time() - end)
         total_steps += 1
         if torch.cuda.is_available():
-            target = target.cuda(async=True)
+            target = target.cuda()
             input_ = input_.cuda()
         input_var = torch.autograd.Variable(input_)
         target_var = torch.autograd.Variable(target)
@@ -221,8 +221,8 @@ def train(train_loader, model, criterion, optimizer, lr_schedule, epoch):
 
         # measure accuracy and record loss
         prec1 = accuracy(output.data, target, topk=(1,))[0]
-        losses.update(loss.data[0], input_.size(0))
-        top1.update(100 - prec1[0], input_.size(0))
+        losses.update(loss.item(), input_.size(0))
+        top1.update(100 - prec1.item(), input_.size(0))
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -292,7 +292,7 @@ def validate(val_loader, model, criterion, epoch):
     end = time.time()
     for i, (input_, target) in enumerate(val_loader):
         if torch.cuda.is_available():
-            target = target.cuda(async=True)
+            target = target.cuda()
             input_ = input_.cuda()
         input_var = torch.autograd.Variable(input_, volatile=True)
         target_var = torch.autograd.Variable(target, volatile=True)
@@ -303,8 +303,8 @@ def validate(val_loader, model, criterion, epoch):
 
         # measure accuracy and record loss
         prec1 = accuracy(output.data, target, topk=(1,))[0]
-        losses.update(loss.data[0], input_.size(0))
-        top1.update(100 - prec1[0], input_.size(0))
+        losses.update(loss.item(), input_.size(0))
+        top1.update(100 - prec1.item(), input_.size(0))
 
         # measure elapsed time
         batch_time.update(time.time() - end)
