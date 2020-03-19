@@ -61,7 +61,7 @@ def main():
             os.makedirs(directory)
         writer = SummaryWriter(directory)
     
-    # Data loading code
+    #  loading code
     print('[0, 1] normalization of input')
     train_loader, val_loader, num_classes = mnist(args.batch_size, pm=False)
 
@@ -167,7 +167,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         # measure accuracy and record loss
         prec1 = accuracy(output.data, target, topk=(1,))[0]
-        losses.update(loss.data[0], input_.size(0))
+        losses.update(loss.item(), input_.size(0))
         top1.update(100 - prec1[0], input_.size(0))
 
         # compute gradient and do SGD step
@@ -249,7 +249,7 @@ def validate(val_loader, model, criterion, epoch):
 
         # measure accuracy and record loss
         prec1 = accuracy(output.data, target, topk=(1,))[0]
-        losses.update(loss.data[0], input_.size(0))
+        losses.update(loss.item(), input_.size(0))
         top1.update(100 - prec1[0], input_.size(0))
 
         # measure elapsed time
