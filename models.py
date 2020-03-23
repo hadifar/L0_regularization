@@ -96,15 +96,19 @@ class L0LeNet5(nn.Module):
                  L0Conv2d(conv_dims[0], conv_dims[1], 5, droprate_init=0.5, temperature=temperature,
                           weight_decay=self.weight_decay, lamba=lambas[1], local_rep=local_rep),
                  nn.ReLU(), nn.MaxPool2d(2)]
+
         self.convs = nn.Sequential(*convs)
+
         if torch.cuda.is_available():
             self.convs = self.convs.cuda()
 
         flat_fts = get_flat_fts(input_size, self.convs)
+
         fcs = [L0Dense(flat_fts, self.fc_dims, droprate_init=0.5, weight_decay=self.weight_decay,
                        lamba=lambas[2], local_rep=local_rep, temperature=temperature), nn.ReLU(),
                L0Dense(self.fc_dims, num_classes, droprate_init=0.5, weight_decay=self.weight_decay,
                        lamba=lambas[3], local_rep=local_rep, temperature=temperature)]
+
         self.fcs = nn.Sequential(*fcs)
 
         self.layers = []

@@ -12,7 +12,6 @@ from utils import save_checkpoint
 from dataloaders import mnist
 from utils import AverageMeter, accuracy
 
-
 parser = argparse.ArgumentParser(description='PyTorch LeNet5 Training')
 parser.add_argument('--epochs', default=200, type=int,
                     help='number of total epochs to run')
@@ -35,7 +34,7 @@ parser.add_argument('--no-tensorboard', dest='tensorboard', action='store_false'
 parser.add_argument('--beta_ema', type=float, default=0.999)
 parser.add_argument('--lambas', nargs='*', type=float, default=[1., 1., 1., 1.])
 parser.add_argument('--local_rep', action='store_true')
-parser.add_argument('--temp', type=float, default=2./3.)
+parser.add_argument('--temp', type=float, default=2. / 3.)
 parser.add_argument('--multi_gpu', action='store_true')
 parser.set_defaults(tensorboard=True)
 
@@ -60,7 +59,7 @@ def main():
         else:
             os.makedirs(directory)
         writer = SummaryWriter(directory)
-    
+
     #  loading code
     print('[0, 1] normalization of input')
     train_loader, val_loader, num_classes = mnist(args.batch_size, pm=False)
@@ -158,8 +157,10 @@ def train(train_loader, model, criterion, optimizer, epoch):
         if torch.cuda.is_available():
             target = target.cuda()
             input_ = input_.cuda()
-        input_var = torch.autograd.Variable(input_)
-        target_var = torch.autograd.Variable(target)
+        # input_var = torch.autograd.Variable(input_)
+        # target_var = torch.autograd.Variable(target)
+        input_var = input_
+        target_var = target
 
         # compute output
         output = model(input_var)
@@ -240,8 +241,10 @@ def validate(val_loader, model, criterion, epoch):
         if torch.cuda.is_available():
             target = target.cuda()
             input_ = input_.cuda()
-        input_var = torch.autograd.Variable(input_, volatile=True)
-        target_var = torch.autograd.Variable(target, volatile=True)
+
+        with torch.no_grad():
+            input_var = input_
+            target_var = target
 
         # compute output
         output = model(input_var)
